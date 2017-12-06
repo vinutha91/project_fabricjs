@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>FabricJS</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script type="text/javascript" src="/js/fabric.js"></script>
+</head>
+<body>
+
+<div id="canvases">
+</div>
+
+<form id="canvasForm">
+    <div class="input-form">
+    <select id="shapes" name="shapes">
+        <option value="shape">Shape</option>
+        <option value="circle">Circle</option>
+        <option value="rectangle">Rectangle</option>
+    </select>
+
+    <select id="canvas-list" name="canvas">
+    </select>
+
+    <button type="button" id="addShape" onclick="draw()">Add shape to canvas</button>
+    </div>
+</form>
+
+<script type="text/javascript">
+    document.onreadystatechange = function () {
+      var state = document.readyState;
+      if (state === 'complete') {
+          // Step 1
+          drawCanvas();
+
+          // Step 2
+          initialiseFabricJSCanvases();
+
+          // Step 3
+          addEventHandlersToCanvases();
+      }
+    };
+
+</script>
+<script type="text/javascript" src="/js/graphics.js"></script>
+</body>
+</html>
