@@ -1,7 +1,9 @@
-var canvasList = [];
-var mousePos = {};
-var offset = {};
-var randomNumber;
+var canvasList = [], 
+    mousePos = {}, 
+    offset = {},
+    randomNumber, 
+    activeObject = {}, 
+    initialCanvas;
 
 function drawCanvas(){
   randomNumber = getRandomInt(2, 5),
@@ -24,7 +26,6 @@ function initialiseFabricJSCanvases() {
     canvas = new fabric.Canvas('canvas'+i);
     canvasList.push(canvas);
   }
-      // canvas.add(new fabric.Rect({ width: 50, height: 50, fill: 'red', top: 100, left: 100 }));
 }
 
 function addOption(canvasId, canvasListOptions) {
@@ -50,7 +51,7 @@ function draw() {
 
 function drawCircle(canvasId) {
   var circle = new fabric.Circle({
-        radius: 20, fill: 'yellow', left: 50, top: 50
+        radius: 20, fill: 'yellow'
       }),
       canvas = canvasList[parseInt(canvasId.replace('canvas',''))];
   canvas.add(circle);
@@ -71,8 +72,6 @@ function drawRectangle(canvasId) {
 }
 
 function addEventHandlersToCanvases() {
-  var activeObject, initialCanvas;
-
   for (var i = 0; i < canvasList.length; i++) {
     
     observe(canvasList[i], 'object:modified');
@@ -96,24 +95,21 @@ function addEventHandlersToCanvases() {
     canvasList[i].on('mouse:down', function() {
       console.log('***MOUSE DOWN'+this.lowerCanvasEl.id)
       if(this.getActiveObject()) {
-            activeObject  = this.getActiveObject();
+            activeObject  = $.extend(true, {}, this.getActiveObject());
             initialCanvas = this.lowerCanvasEl.id;
         }
     });
 
-    canvasList[i].on('mouse:up', function(e) {
-      var target = event.target,
-          currentCanvasId = target.parentElement.childNodes[0].id;
-
-      console.log('***MOUSE UP'+currentCanvasId);
-
-      if(currentCanvasId !== initialCanvas && !!activeObject) {
-          canvasList[parseInt(currentCanvasId.replace('canvas', ''))].add(activeObject.canvas._objects[0]);
-          canvasList[parseInt(currentCanvasId.replace('canvas', ''))].renderAll();
-      }
-
-      initialCanvas = '';
-      activeObject  = {}; 
+    $(document).on('mouseup', function(evt) {
+        if(evt.target.localName === 'canvas' && initialCanvas) {
+            canvasId = $(evt.target).siblings().attr('id');
+            if(canvasId !== initialCanvas) {
+                canvasList[parseInt(canvasId.replace('canvas', ''))].add(activeObject);
+                canvasList[parseInt(canvasId.replace('canvas', ''))].renderAll();
+            }
+        }
+        initialCanvas = '';
+        activeObject  = {};                 
     });
   }
 }
